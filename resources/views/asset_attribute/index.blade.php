@@ -14,7 +14,7 @@
             <div class="card-header text-right">
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
 
-                    <div class="d-flex flex-column flex-md-row align-items-md-center gap-2 mb-3 mb-md-0">
+                    <div class="d-flex flex-column flex-md-row align-items-md-center gap-2 mb-2 mb-md-0">
                         <select name="kategori_id" id="filter-kategori" class="form-control form-control-sm"
                             style="min-width: 220px;">
                             <option value="">-- Semua Kategori --</option>

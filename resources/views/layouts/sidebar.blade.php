@@ -47,9 +47,23 @@
 
                 <!-- Data -->
                 <li
-                    class="nav-item has-treeview {{ request()->is('kategori*') || request()->is('lokasi*') || request()->is('employe*') || request()->is('assetattribute*') ? 'menu-open' : '' }}">
+                    class="nav-item has-treeview {{ request()->is('kategori*') ||
+                    request()->is('lokasi*') ||
+                    request()->is('employe*') ||
+                    request()->is('assetattribute*') ||
+                    request()->is('tipe*') ||
+                    request()->is('vendor*')
+                        ? 'menu-open'
+                        : '' }}">
                     <a href="#"
-                        class="nav-link {{ request()->is('kategori*') || request()->is('lokasi*') || request()->is('employe*') || request()->is('assetattribute*') ? 'active' : '' }}">
+                        class="nav-link {{ request()->is('kategori*') ||
+                        request()->is('lokasi*') ||
+                        request()->is('employe*') ||
+                        request()->is('assetattribute*') ||
+                        request()->is('tipe*') ||
+                        request()->is('vendor*')
+                            ? 'active'
+                            : '' }}">
                         <i class="nav-icon fas fa-database"></i>
                         <p>Master <i class="fas fa-angle-left right"></i></p>
                     </a>
@@ -80,6 +94,20 @@
                                 class="nav-link {{ request()->routeIs('assetattribute.*') ? 'active' : '' }}">
                                 <i class="fas fa-cogs nav-icon"></i>
                                 <p>Spesifikasi</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('tipe.index') }}"
+                                class="nav-link {{ request()->routeIs('tipe.*') ? 'active' : '' }}">
+                                <i class="fas fa-layer-group nav-icon"></i>
+                                <p>Tipe</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('vendor.index') }}"
+                                class="nav-link {{ request()->routeIs('vendor.*') ? 'active' : '' }}">
+                                <i class="fas fa-store nav-icon"></i>
+                                <p>Vendor</p>
                             </a>
                         </li>
                     </ul>

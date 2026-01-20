@@ -1,5 +1,5 @@
 <div class="modal fade" id="fotoModal" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Foto Aset</h5>

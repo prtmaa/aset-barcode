@@ -19,7 +19,7 @@
             <div class="row">
 
                 {{-- FOTO --}}
-                <div class="col-md-5 text-center">
+                <div class="col-md-4 text-center">
                     @if ($asset->foto)
                         <img src="{{ asset($asset->foto) }}" class="img-thumbnail mb-2" width="400">
                     @else
@@ -28,10 +28,10 @@
                 </div>
 
                 {{-- DATA --}}
-                <div class="col-md-7">
+                <div class="col-md-4">
                     <table class="table table-bordered">
                         <tr>
-                            <th width="200">Kode Aset</th>
+                            <th width="130">Kode Aset</th>
                             <td>{{ $asset->kode_aset }}</td>
                         </tr>
                         <tr>
@@ -39,15 +39,50 @@
                             <td>{{ $asset->nama_aset }}</td>
                         </tr>
                         <tr>
-                            <th>Kategori</th>
-                            <td>{{ $asset->kategori->nama ?? '-' }}</td>
+                            <th>Tipe Aset</th>
+                            <td>{{ $asset->tipe->nama }}</td>
+                        </tr>
+                        <tr>
+                            <th>PIC/Divisi</th>
+                            <td>
+                                @if ($asset->activeAssignment)
+                                    {{ $asset->activeAssignment->employee->nama }}
+                                    <small class="text-muted d-block">
+                                        {{ $asset->activeAssignment->employee->jabatan . ' ' . $asset->activeAssignment->employee->depertemen ?? '-' }}
+                                    </small>
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
+                            </td>
                         </tr>
                         <tr>
                             <th>Lokasi</th>
                             <td>{{ $asset->lokasi->nama ?? '-' }}</td>
                         </tr>
                         <tr>
-                            <th>Tanggal Pembelian</th>
+                            <th>Vendor</th>
+                            <td>{{ $asset->vendor->nama }}</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="col-md-4">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th width="130">Kategori</th>
+                            <td>{{ $asset->kategori->nama ?? '-' }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Jumlah</th>
+                            <td>{{ $asset->jumlah ?? '-' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Nilai Perolehan</th>
+                            <td>{{ formatRupiah($asset->harga) ?? '-' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Tgl Perolehan</th>
                             <td>
                                 {{ formatTanggalIndo($asset->tanggal_pembelian) }}
                                 <small class="text-muted d-block">
@@ -56,23 +91,20 @@
 
                             </td>
                         </tr>
-
                         <tr>
-                            <th>Pengguna</th>
+                            <th>Kondisi</th>
                             <td>
-                                @if ($asset->activeAssignment)
-                                    <b>{{ $asset->activeAssignment->employee->nama }}</b><br>
-                                    <small class="text-muted">
-                                        {{ $asset->activeAssignment->employee->jabatan ?? '-' }}
-                                    </small>
-                                @else
-                                    <span class="text-muted">-</span>
-                                @endif
+                                {{ $asset->kondisi ?? '-' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Status</th>
+                            <td>
+                                {{ $asset->status ?? '-' }}
                             </td>
                         </tr>
                     </table>
                 </div>
-
             </div>
 
             {{-- ATRIBUT --}}
@@ -100,7 +132,7 @@
                     @if (empty($asset->kelengkapan))
                         <i class="text-muted">Tidak ada kelengkapan</i>
                     @else
-                        <ul class="pl-3 mb-0">
+                        <ul>
                             @foreach (explode(',', $asset->kelengkapan) as $item)
                                 <li>{{ trim($item) }}</li>
                             @endforeach

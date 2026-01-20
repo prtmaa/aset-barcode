@@ -44,7 +44,7 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="departemen" class="col-md-2 col-md-offset-1 control-label">Departemen</label>
+                            <label for="departemen" class="col-md-2 col-md-offset-1 control-label">Divisi</label>
                             <div class="col-md 6">
                                 <input type="text" name="departemen" id="departemen" class="form-control">
                                 <span class="help-block with-errors"></span>

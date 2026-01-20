@@ -1,13 +1,13 @@
 @extends('layouts.master')
 
 @section('tittle')
-    Data Karyawan
+    Data Tipe Aset
 @endsection
 
 @section('breadcrumb')
     <li class="breadcrumb-item"> <a href="{{ url('/') }}">Dashboard</a></li>
     <li class="breadcrumb-item active">Master</li>
-    <li class="breadcrumb-item active">PIC</li>
+    <li class="breadcrumb-item active">Tipe</li>
 @endsection
 
 @section('content')
@@ -22,8 +22,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="btn-group">
-                                    <button onclick="addForm('{{ route('employe.store') }}')"
-                                        class="btn btn-primary btn-sm">
+                                    <button onclick="addForm('{{ route('tipe.store') }}')" class="btn btn-primary btn-sm">
                                         <i class="fa fa-plus-circle"></i> Tambah Data
                                     </button>
                                 </div>
@@ -35,11 +34,7 @@
                                     <table class="table table-bordered text-center">
                                         <thead>
                                             <th style="width: 20px;">No</th>
-                                            <th>Nama</th>
-                                            <th>Email</th>
-                                            <th>Jabatan</th>
-                                            <th>Divisi</th>
-                                            <th>No HP</th>
+                                            <th>Tipe</th>
                                             <th style="width: 220px;">Aksi</th>
                                         </thead>
                                         <tbody>
@@ -58,7 +53,7 @@
             </section>
         </div>
 
-        @include('employe.form')
+        @include('tipe.form')
     @endsection
 
     @push('js')
@@ -89,7 +84,7 @@
                         },
                     },
                     ajax: {
-                        url: '{{ route('employe.data') }}',
+                        url: '{{ route('tipe.data') }}',
                     },
                     columns: [{
                             data: 'DT_RowIndex',
@@ -97,18 +92,6 @@
                         },
                         {
                             data: 'nama'
-                        },
-                        {
-                            data: 'email'
-                        },
-                        {
-                            data: 'jabatan'
-                        },
-                        {
-                            data: 'departemen'
-                        },
-                        {
-                            data: 'no_hp'
                         },
 
                         {
@@ -184,10 +167,6 @@
                 $.get(url)
                     .done((response) => {
                         $('#modal-form [name=nama]').val(response.nama);
-                        $('#modal-form [name=email]').val(response.email);
-                        $('#modal-form [name=jabatan]').val(response.jabatan);
-                        $('#modal-form [name=departemen]').val(response.departemen);
-                        $('#modal-form [name=no_hp]').val(response.no_hp);
                     })
                     .fail((errors) => {
                         Swal.fire({

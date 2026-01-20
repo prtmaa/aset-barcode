@@ -17,6 +17,11 @@ class Asset extends Model
         'foto',
         'catatan',
         'kelengkapan',
+        'tipe_id',
+        'vendor_id',
+        'harga',
+        'jumlah',
+        'status',
     ];
 
     // Kategori aset
@@ -55,11 +60,13 @@ class Asset extends Model
             ->where('status', 'aktif');
     }
 
-
-    // Pengguna aktif (jika ada)
-    public function currentAssignment()
+    public function tipe()
     {
-        return $this->hasOne(AssetAssignment::class)
-            ->where('status', 'aktif');
+        return $this->belongsTo(Tipe::class);
+    }
+
+    public function vendor()
+    {
+        return $this->belongsTo(Vendor::class);
     }
 }

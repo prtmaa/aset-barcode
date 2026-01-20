@@ -30,19 +30,20 @@
                             <div class="card-body table-responsive">
                                 <form action="" class="form-produk" method="post">
                                     @csrf
-                                    <table class="table table-bordered text-center">
+                                    <table class="table table-bordered text-center" id="table-aset">
                                         <thead>
                                             <th>No</th>
                                             <th>Kode</th>
-                                            <th>Nama</th>
-                                            <th>Pengguna</th>
-                                            <th>Kategori</th>
-                                            <th>Spesifikasi</th>
-                                            <th>Pembelian</th>
-                                            <th>Kelengkapan</th>
+                                            <th>Nama Aset</th>
+                                            <th>Vendor</th>
+                                            <th>Tipe</th>
+                                            <th>Jumlah</th>
                                             <th>Lokasi</th>
+                                            <th>PIC/Divisi</th>
+                                            <th>Tanggal Perolehan</th>
+                                            <th>Nilai Perolehan</th>
                                             <th>Kondisi</th>
-                                            <th>Catatan</th>
+                                            <th>Status</th>
                                             <th>Aksi</th>
                                         </thead>
                                         <tbody>
@@ -64,13 +65,14 @@
         @include('asset.form')
         @include('asset.foto')
         @include('asset.qrcode')
+        @include('asset.detail')
     @endsection
 
     @push('js')
         <script>
             let table;
             $(function() {
-                table = $('.table').DataTable({
+                table = $('#table-aset').DataTable({
                     processing: true,
                     serverSide: true,
                     deferRender: true,
@@ -105,30 +107,31 @@
                             data: 'nama_aset'
                         },
                         {
-                            data: 'pengguna',
+                            data: 'vendor'
                         },
                         {
-                            data: 'kategori'
+                            data: 'tipe'
                         },
                         {
-                            data: 'atribut',
-                            orderable: false,
-                            searchable: false
-                        },
-                        {
-                            data: 'tanggal_pembelian'
-                        },
-                        {
-                            data: 'kelengkapan'
+                            data: 'jumlah'
                         },
                         {
                             data: 'lokasi'
                         },
                         {
+                            data: 'pengguna',
+                        },
+                        {
+                            data: 'tanggal_pembelian'
+                        },
+                        {
+                            data: 'harga'
+                        },
+                        {
                             data: 'kondisi'
                         },
                         {
-                            data: 'catatan',
+                            data: 'status'
                         },
                         {
                             data: 'aksi',
@@ -219,10 +222,16 @@
                     $('[name=kode_aset]').val(res.kode_aset);
                     $('[name=nama_aset]').val(res.nama_aset);
                     $('[name=lokasi_id]').val(res.lokasi_id);
+                    $('[name=tipe_id]').val(res.tipe_id);
+                    $('[name=vendor_id]').val(res.vendor_id);
                     $('[name=kondisi]').val(res.kondisi);
                     $('[name=catatan]').val(res.catatan);
                     $('[name=kelengkapan]').val(res.kelengkapan);
                     $('[name=tanggal_pembelian]').val(res.tanggal_pembelian);
+                    const formattedharga = formatEdit(res.harga);
+                    $('#modal-form [name=harga]').val(formattedharga);
+                    $('[name=jumlah]').val(res.jumlah);
+                    $('[name=status]').val(res.status);
 
                     // PREVIEW FOTO LAMA
                     if (res.foto) {
@@ -442,6 +451,16 @@
                         .val('');
                 }
             });
+
+            $(document).on('click', '.btn-detail', function() {
+
+                $('#modal-kategori').text($(this).data('kategori') || '-');
+                $('#modal-spesifikasi').text($(this).data('spesifikasi') || '-');
+                $('#modal-kelengkapan').text($(this).data('kelengkapan') || '-');
+                $('#modal-catatan').text($(this).data('catatan') || '-');
+
+                $('#detailModal').modal('show');
+            });
         </script>
         <script>
             function showFotoModal(src) {
@@ -471,6 +490,47 @@
                 });
 
                 $('#qrModal').modal('show');
+            }
+
+            // input harga
+            function formatRibuanKoma(el) {
+                let value = el.value;
+
+                // hanya izinkan angka dan koma
+                value = value.replace(/[^0-9,]/g, '');
+
+                let parts = value.split(',');
+
+                // format bagian ribuan
+                let angka = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+                if (parts.length > 1) {
+                    el.value = angka + ',' + parts[1];
+                } else {
+                    el.value = angka;
+                }
+            }
+
+            document.getElementById('harga').addEventListener('input', function() {
+                formatRibuanKoma(this);
+            });
+
+            function formatEdit(value) {
+                if (!value) return "";
+
+                // ubah ke string
+                value = value.toString();
+
+                // ubah titik desimal SQL → koma
+                value = value.replace('.', ',');
+
+                // pecah angka
+                let parts = value.split(',');
+
+                // tambahkan titik ribuan
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+                return parts.join(',');
             }
         </script>
     @endpush

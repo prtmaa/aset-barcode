@@ -38,7 +38,7 @@
                                    <input type="checkbox" class="form-check-input" id="is_assign" name="is_assign"
                                        value="1">
                                    <label class="form-check-label" for="is_assign">
-                                       Assign aset ke pengguna
+                                       Assign aset ke PIC/Divisi
                                    </label>
                                </div>
                            </div>
@@ -47,9 +47,9 @@
                        <div id="assign-area" style="display:none;">
 
                            <div class="form-group row">
-                               <label class="col-md-4 col-form-label">Pengguna</label>
+                               <label class="col-md-4 col-form-label">PIC/Divisi</label>
                                <div class="col-md-8">
-                                   <select name="employee_id" class="form-control select2bs4">
+                                   <select name="employee_id" class="form-control">
                                        <option value="">Pilih Pengguna...</option>
                                        @foreach ($employee as $emp)
                                            <option value="{{ $emp->id }}">{{ $emp->nama }}</option>
@@ -75,9 +75,25 @@
                        </div>
 
                        <div class="form-group row">
+                           <label for="tipe_id" class="col-md-4 col-md-offset-1 control-label">Tipe</label>
+                           <div class="col-md-8">
+                               <select name="tipe_id" id="tipe_id" class="form-control"
+                                   oninvalid="this.setCustomValidity('Silahkan pilih tipe')"
+                                   oninput="this.setCustomValidity('')">
+                                   <option value="" disabled selected>Pilih tipe aset...</option>
+                                   @foreach ($tipe as $itm)
+                                       <option value="{{ $itm->id }}">{{ $itm->nama }}
+                                       </option>
+                                   @endforeach
+                               </select>
+                               <span class="help-block with-errors"></span>
+                           </div>
+                       </div>
+
+                       <div class="form-group row">
                            <label for="kategori_id" class="col-md-4 col-md-offset-1 control-label">Kategori</label>
                            <div class="col-md-8">
-                               <select name="kategori_id" id="kategori_id" class="form-control select2bs4"
+                               <select name="kategori_id" id="kategori_id" class="form-control"
                                    oninvalid="this.setCustomValidity('Silahkan pilih kategori')"
                                    oninput="this.setCustomValidity('')">
                                    <option value="" disabled selected>Pilih kategori...</option>
@@ -107,6 +123,36 @@
                        </div>
 
                        <div class="form-group row">
+                           <label for="vendor_id" class="col-md-4 col-md-offset-1 control-label">Vendor</label>
+                           <div class="col-md-8">
+                               <select name="vendor_id" id="vendor_id" class="form-control">
+                                   <option value="" disabled selected>Pilih vendor...</option>
+                                   @foreach ($vendor as $itm)
+                                       <option value="{{ $itm->id }}">{{ $itm->nama }}
+                                       </option>
+                                   @endforeach
+                               </select>
+                               <span class="help-block with-errors"></span>
+                           </div>
+                       </div>
+
+                       <div class="form-group row">
+                           <label for="harga" class="col-md-4 col-md-offset-1 control-label">Nilai
+                               Perolehan</label>
+                           <div class="col-md-8">
+                               <input type="text" name="harga" id="harga" class="form-control harga">
+                           </div>
+                       </div>
+
+                       <div class="form-group row">
+                           <label for="jumlah" class="col-md-4 col-md-offset-1 control-label">Jumlah</label>
+                           <div class="col-md-8">
+                               <input type="number" name="jumlah" id="jumlah" class="form-control"
+                                   placeholder="1" value="1" min="1">
+                           </div>
+                       </div>
+
+                       <div class="form-group row">
                            <label for="kelengkapan" class="col-md-4 col-md-offset-1 control-label">Kelengkapan</label>
                            <div class="col-md-8">
                                <input type="text" name="kelengkapan" id="kelengkapan" class="form-control"
@@ -117,7 +163,7 @@
                        <div class="form-group row">
                            <label for="lokasi_id" class="col-md-4 col-md-offset-1 control-label">Lokasi</label>
                            <div class="col-md-8">
-                               <select name="lokasi_id" id="lokasi_id" class="form-control select2bs4">
+                               <select name="lokasi_id" id="lokasi_id" class="form-control">
                                    <option value="" disabled selected>Pilih lokasi...</option>
                                    @foreach ($lokasi as $itm)
                                        <option value="{{ $itm->id }}">{{ $itm->nama }}
@@ -132,9 +178,24 @@
                            <label class="col-md-4 col-md-offset-1 control-label">Kondisi</label>
                            <div class="col-md-8">
                                <select name="kondisi" class="form-control">
-                                   <option value="baik">Baik</option>
-                                   <option value="rusak">Rusak</option>
-                                   <option value="maintenance">Maintenance</option>
+                                   <option value="Baik">Baik</option>
+                                   <option value="Cukup">Cukup</option>
+                                   <option value="Rusak Ringan">Rusak Ringan</option>
+                                   <option value="Rusak Berat">Rusak Berat</option>
+                                   <option value="Tidak Layak">Tidak Layak</option>
+                               </select>
+                           </div>
+                       </div>
+
+                       <div class="form-group row">
+                           <label class="col-md-4 col-md-offset-1 control-label">Status</label>
+                           <div class="col-md-8">
+                               <select name="status" class="form-control">
+                                   <option value="Aktif Digunakan">Aktif Digunakan</option>
+                                   <option value="Dalam Perbaikan">Dalam Perbaikan</option>
+                                   <option value="Disimpan">Disimpan</option>
+                                   <option value="Dipinjam">Dipinjam</option>
+                                   <option value="Penghapusan">Penghapusan</option>
                                </select>
                            </div>
                        </div>

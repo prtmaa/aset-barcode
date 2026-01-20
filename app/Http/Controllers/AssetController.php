@@ -9,6 +9,8 @@ use App\Models\AssetAttributeValue;
 use App\Models\Employee;
 use App\Models\Kategori;
 use App\Models\Lokasi;
+use App\Models\Tipe;
+use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -26,8 +28,10 @@ class AssetController extends Controller
         $kategori = Kategori::all();
         $lokasi = Lokasi::all();
         $employee = Employee::all();
+        $tipe = Tipe::all();
+        $vendor = Vendor::all();
 
-        return view('asset.index', compact('kategori', 'lokasi', 'employee'));
+        return view('asset.index', compact('kategori', 'lokasi', 'employee', 'tipe', 'vendor'));
     }
 
     public function data()
@@ -35,6 +39,8 @@ class AssetController extends Controller
         $asset = Asset::with([
             'kategori',
             'lokasi',
+            'tipe',
+            'vendor',
             'atributValues.atribut',
             'activeAssignment.employee'
         ])
@@ -45,30 +51,32 @@ class AssetController extends Controller
             ->of($asset)
             ->addIndexColumn()
 
-            ->addColumn('kategori', fn($asset) => $asset->kategori->nama ?? '-')
             ->addColumn('lokasi', fn($asset) => $asset->lokasi->nama ?? '-')
-            ->addColumn('atribut', function ($asset) {
+            ->addColumn('tipe', fn($asset) => $asset->tipe->nama ?? '-')
+            ->addColumn('vendor', fn($asset) => $asset->vendor->nama ?? '-')
+            ->addColumn('harga', fn($asset) => formatRupiah($asset->harga) ?? '-')
+            // ->addColumn('atribut', function ($asset) {
 
-                if (!$asset->atributValues || $asset->atributValues->isEmpty()) {
-                    return '<div class="text-left"><i class="text-muted">-</i></div>';
-                }
+            //     if (!$asset->atributValues || $asset->atributValues->isEmpty()) {
+            //         return '<div class="text-left"><i class="text-muted">-</i></div>';
+            //     }
 
-                $html = '<div class="text-left">';
-                $html .= '<ul class="pl-3 mb-0">';
-                foreach ($asset->atributValues as $val) {
+            //     $html = '<div class="text-left">';
+            //     $html .= '<ul class="pl-3 mb-0">';
+            //     foreach ($asset->atributValues as $val) {
 
-                    $nama = optional($val->atribut)->nama_atribut ?? '-';
+            //         $nama = optional($val->atribut)->nama_atribut ?? '-';
 
-                    $html .= '<li><b>'
-                        . e($nama)
-                        . ':</b> '
-                        . e($val->nilai)
-                        . '</li>';
-                }
-                $html .= '</ul></div>';
+            //         $html .= '<li><b>'
+            //             . e($nama)
+            //             . ':</b> '
+            //             . e($val->nilai)
+            //             . '</li>';
+            //     }
+            //     $html .= '</ul></div>';
 
-                return $html;
-            })
+            //     return $html;
+            // })
             ->addColumn('tanggal_pembelian', function ($asset) {
 
                 if (!$asset->tanggal_pembelian) {
@@ -78,31 +86,20 @@ class AssetController extends Controller
                 return
                     e(formatTanggalIndo($asset->tanggal_pembelian)) .
                     '<small class="text-muted d-block">
-                        ' . e(usiaSejak($asset->tanggal_pembelian)) . ' sejak pembelian
+                      <i class="fas fa-clock"></i> ' . e(usiaSejak($asset->tanggal_pembelian)) . '
                     </small>';
             })
             ->addColumn('pengguna', function ($asset) {
 
                 if (!$asset->activeAssignment) {
-                    return '<p>-</p>';
+                    return '';
                 }
 
                 $emp = $asset->activeAssignment->employee;
 
                 return '<b>' . e($emp->nama) . '</b><br>
-                        <small class="text-muted">' . e($emp->jabatan ?? '-') . '</small>';
+                        <small class="text-muted">' . e($emp->jabatan ?? '') . '</br>' . e($emp->departemen ?? '') . '</small>';
             })
-
-            ->addColumn('qr_code', function ($asset) {
-
-                return '
-                        <button type="button" class="btn btn-sm btn-outline-success"
-                            onclick="showQrModal(`' . e($asset->kode_aset) . '`)">
-                            <i class="fas fa-qrcode"></i> QR
-                        </button>
-                    ';
-            })
-
             ->addColumn('aksi', function ($asset) {
 
                 $btnFoto = '';
@@ -123,6 +120,15 @@ class AssetController extends Controller
                     ';
                 }
 
+                $spesifikasi = '';
+
+                if ($asset->atributValues && $asset->atributValues->count()) {
+                    foreach ($asset->atributValues as $val) {
+                        $nama = optional($val->atribut)->nama_atribut ?? '-';
+                        $spesifikasi .= $nama . ': ' . $val->nilai . "\n";
+                    }
+                }
+
                 return '
                     <div class="btn-group mb-1">
                         <button type="button" onclick="editForm(`' . route('asset.update', $asset->id) . '`)"
@@ -139,6 +145,13 @@ class AssetController extends Controller
                         <button type="button" class="btn btn-sm btn-warning btn-flat"
                             onclick="showQrModal(`' . e($asset->kode_aset) . '`)">
                             <i class="fas fa-qrcode"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-primary btn-detail btn-flat"
+                            data-spesifikasi="' . e(trim($spesifikasi)) . '"
+                            data-kelengkapan="' . e($asset->kelengkapan) . '"
+                            data-kategori="' . e($asset->kategori->nama) . '"
+                            data-catatan="' . e($asset->catatan) . '">
+                            <i class="fas fa-list"></i>
                         </button>
                     </div>
                 ';
@@ -158,9 +171,22 @@ class AssetController extends Controller
     {
         DB::transaction(function () use ($request) {
 
-            // SIMPAN ASSET
-            $data = $request->except(['atribut', 'is_assign', 'employee_id', 'tanggal_mulai', 'keterangan']);
+            // AMBIL DATA UTAMA
+            $data = $request->except([
+                'atribut',
+                'is_assign',
+                'employee_id',
+                'tanggal_mulai',
+                'keterangan',
+                'foto'
+            ]);
 
+            // NORMALISASI HARGA
+            if ($request->filled('harga')) {
+                $data['harga'] = (float) str_replace(['.', ','], ['', '.'], $request->harga);
+            }
+
+            // UPLOAD FOTO
             if ($request->hasFile('foto')) {
                 $file = $request->file('foto');
                 $nama = 'aset_' . time() . '_' . Str::random(6) . '.' . $file->getClientOriginalExtension();
@@ -168,6 +194,7 @@ class AssetController extends Controller
                 $data['foto'] = 'assets/foto/' . $nama;
             }
 
+            // SIMPAN ASSET
             $asset = Asset::create($data);
 
             // SIMPAN ATRIBUT DINAMIS
@@ -175,7 +202,7 @@ class AssetController extends Controller
                 $insert = [];
 
                 foreach ($request->atribut as $attributeId => $nilai) {
-                    if ($nilai === null || $nilai === '') continue;
+                    if (blank($nilai)) continue;
 
                     $insert[] = [
                         'asset_id' => $asset->id,
@@ -186,11 +213,13 @@ class AssetController extends Controller
                     ];
                 }
 
-                AssetAttributeValue::insert($insert);
+                if (!empty($insert)) {
+                    AssetAttributeValue::insert($insert);
+                }
             }
 
-            // ASSIGN
-            if ($request->is_assign && $request->employee_id) {
+            // ASSIGN KE KARYAWAN
+            if ($request->boolean('is_assign') && $request->filled('employee_id')) {
                 AssetAssignment::create([
                     'asset_id' => $asset->id,
                     'employee_id' => $request->employee_id,
@@ -203,6 +232,7 @@ class AssetController extends Controller
 
         return response()->json(['message' => 'Data berhasil disimpan'], 200);
     }
+
 
 
     public function show($id)
@@ -228,8 +258,14 @@ class AssetController extends Controller
                 'is_assign',
                 'employee_id',
                 'tanggal_mulai',
-                'keterangan'
+                'keterangan',
+                'foto'
             ]);
+
+            // NORMALISASI HARGA
+            if ($request->filled('harga')) {
+                $data['harga'] = (float) str_replace(['.', ','], ['', '.'], $request->harga);
+            }
 
             // FOTO
             if ($request->hasFile('foto')) {
@@ -245,16 +281,17 @@ class AssetController extends Controller
                 $data['foto'] = 'assets/foto/' . $nama;
             }
 
+            // UPDATE ASSET
             $asset->update($data);
 
-            // ATRIBUT DINAMIS
+            // ATRIBUT DINAMIS (REPLACE)
             AssetAttributeValue::where('asset_id', $asset->id)->delete();
 
             if ($request->filled('atribut')) {
                 $insert = [];
 
                 foreach ($request->atribut as $attributeId => $nilai) {
-                    if ($nilai === null || $nilai === '') continue;
+                    if (blank($nilai)) continue;
 
                     $insert[] = [
                         'asset_id' => $asset->id,
@@ -265,24 +302,23 @@ class AssetController extends Controller
                     ];
                 }
 
-                if ($insert) {
+                if (!empty($insert)) {
                     AssetAttributeValue::insert($insert);
                 }
             }
 
-            // ASSIGNMENT (UPDATE LOGIC)
+            // ASSIGNMENT
             $assignment = AssetAssignment::where('asset_id', $asset->id)
                 ->where('status', 'aktif')
                 ->first();
 
-            // jika checkbox dicentang
-            if ($request->is_assign && $request->employee_id) {
+            if ($request->boolean('is_assign') && $request->filled('employee_id')) {
 
                 if ($assignment) {
                     // update assignment aktif
                     $assignment->update([
                         'employee_id' => $request->employee_id,
-                        'tanggal_mulai' => $request->tanggal_mulai,
+                        'tanggal_mulai' => $request->tanggal_mulai ?? $assignment->tanggal_mulai,
                         'keterangan' => $request->keterangan,
                     ]);
                 } else {
@@ -308,6 +344,7 @@ class AssetController extends Controller
 
         return response()->json(['message' => 'Data berhasil diubah'], 200);
     }
+
 
 
     public function destroy($id)
