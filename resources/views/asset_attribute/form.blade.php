@@ -27,6 +27,11 @@
                     </div>
 
                     <div class="form-group">
+                        <label>Satuan</label>
+                        <input type="text" name="satuan" class="form-control">
+                    </div>
+
+                    <div class="form-group">
                         <label>Tipe Input</label>
                         <select name="tipe_input" class="form-control tipe-input">
                             <option value="text">Text</option>

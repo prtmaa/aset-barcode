@@ -41,6 +41,7 @@
                             <th>Kategori</th>
                             <th>Nama Atribut</th>
                             <th>Tipe Atribut</th>
+                            <th>Satuan</th>
                             <th>Opsi</th>
                             <th>Aksi</th>
                         </thead>
@@ -106,6 +107,10 @@
                     {
                         data: 'tipe_input',
                         name: 'tipe_input'
+                    },
+                    {
+                        data: 'satuan',
+                        name: 'satuan'
                     },
                     {
                         data: 'opsi',
@@ -196,6 +201,7 @@
                     $('#modal-form [name=kategori_id]').val(response.kategori_id);
                     $('#modal-form [name=nama_atribut]').val(response.nama_atribut);
                     $('#modal-form [name=tipe_input]').val(response.tipe_input);
+                    $('#modal-form [name=satuan]').val(response.satuan);
                     $('#modal-form [name=opsi]').val(response.opsi);
                 })
                 .fail((errors) => {

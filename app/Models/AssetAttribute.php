@@ -12,6 +12,7 @@ class AssetAttribute extends Model
         'nama_atribut',
         'tipe_input',
         'opsi',
+        'satuan',
     ];
 
     public function kategori()

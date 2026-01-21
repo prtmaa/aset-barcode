@@ -58,7 +58,8 @@ class AssetAttributeController extends Controller
             'kategori_id'  => $request->kategori_id,
             'nama_atribut' => $request->nama_atribut,
             'tipe_input'   => $request->tipe_input,
-            'opsi'         => $request->opsi
+            'opsi'         => $request->opsi,
+            'satuan'       => $request->satuan,
         ]);
 
         return back()->with('success', 'Atribut berhasil ditambahkan');

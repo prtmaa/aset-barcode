@@ -49,14 +49,15 @@
                            <div class="form-group row">
                                <label class="col-md-4 col-form-label">PIC/Divisi</label>
                                <div class="col-md-8">
-                                   <select name="employee_id" class="form-control">
-                                       <option value="">Pilih Pengguna...</option>
+                                   <select name="employee_id" class="form-control select2">
+                                       <option value="" disabled selected>Pilih Pengguna...</option>
                                        @foreach ($employee as $emp)
                                            <option value="{{ $emp->id }}">{{ $emp->nama }}</option>
                                        @endforeach
                                    </select>
                                </div>
                            </div>
+
 
                            <div class="form-group row">
                                <label class="col-md-4 col-form-label">Tanggal Mulai</label>
@@ -77,7 +78,7 @@
                        <div class="form-group row">
                            <label for="tipe_id" class="col-md-4 col-md-offset-1 control-label">Tipe</label>
                            <div class="col-md-8">
-                               <select name="tipe_id" id="tipe_id" class="form-control"
+                               <select name="tipe_id" id="tipe_id" class="form-control select2"
                                    oninvalid="this.setCustomValidity('Silahkan pilih tipe')"
                                    oninput="this.setCustomValidity('')">
                                    <option value="" disabled selected>Pilih tipe aset...</option>
@@ -93,7 +94,7 @@
                        <div class="form-group row">
                            <label for="kategori_id" class="col-md-4 col-md-offset-1 control-label">Kategori</label>
                            <div class="col-md-8">
-                               <select name="kategori_id" id="kategori_id" class="form-control"
+                               <select name="kategori_id" id="kategori_id" class="form-control select2"
                                    oninvalid="this.setCustomValidity('Silahkan pilih kategori')"
                                    oninput="this.setCustomValidity('')">
                                    <option value="" disabled selected>Pilih kategori...</option>
@@ -125,7 +126,7 @@
                        <div class="form-group row">
                            <label for="vendor_id" class="col-md-4 col-md-offset-1 control-label">Vendor</label>
                            <div class="col-md-8">
-                               <select name="vendor_id" id="vendor_id" class="form-control">
+                               <select name="vendor_id" id="vendor_id" class="form-control select2">
                                    <option value="" disabled selected>Pilih vendor...</option>
                                    @foreach ($vendor as $itm)
                                        <option value="{{ $itm->id }}">{{ $itm->nama }}
@@ -163,7 +164,7 @@
                        <div class="form-group row">
                            <label for="lokasi_id" class="col-md-4 col-md-offset-1 control-label">Lokasi</label>
                            <div class="col-md-8">
-                               <select name="lokasi_id" id="lokasi_id" class="form-control">
+                               <select name="lokasi_id" id="lokasi_id" class="form-control select2">
                                    <option value="" disabled selected>Pilih lokasi...</option>
                                    @foreach ($lokasi as $itm)
                                        <option value="{{ $itm->id }}">{{ $itm->nama }}
@@ -177,7 +178,7 @@
                        <div class="form-group row">
                            <label class="col-md-4 col-md-offset-1 control-label">Kondisi</label>
                            <div class="col-md-8">
-                               <select name="kondisi" class="form-control">
+                               <select name="kondisi" class="form-control select2">
                                    <option value="Baik">Baik</option>
                                    <option value="Cukup">Cukup</option>
                                    <option value="Rusak Ringan">Rusak Ringan</option>
@@ -190,7 +191,7 @@
                        <div class="form-group row">
                            <label class="col-md-4 col-md-offset-1 control-label">Status</label>
                            <div class="col-md-8">
-                               <select name="status" class="form-control">
+                               <select name="status" class="form-control select2">
                                    <option value="Aktif Digunakan">Aktif Digunakan</option>
                                    <option value="Dalam Perbaikan">Dalam Perbaikan</option>
                                    <option value="Disimpan">Disimpan</option>

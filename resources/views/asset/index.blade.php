@@ -343,6 +343,9 @@
 
                     data.forEach(attr => {
 
+                        let field = '';
+
+                        //BUILD INPUT DASAR
                         let input = '';
 
                         // NUMBER
@@ -351,29 +354,25 @@
                                 `<input type="number" name="atribut[${attr.id}]" class="form-control">`;
                         }
 
-                        // SELECT (dari kolom OPSI)
+                        // SELECT
                         else if (attr.tipe_input === 'select') {
 
                             let optionsHtml = `<option value="">-- Pilih --</option>`;
 
                             if (attr.opsi) {
                                 attr.opsi.split(',').forEach(item => {
-
-                                    // cek format label|value
                                     let parts = item.split('|');
-
                                     let label = parts[0].trim();
                                     let value = parts[1] ? parts[1].trim() : label;
-
                                     optionsHtml += `<option value="${value}">${label}</option>`;
                                 });
                             }
 
                             input = `
-                                <select name="atribut[${attr.id}]" class="form-control">
-                                    ${optionsHtml}
-                                </select>
-                            `;
+                    <select name="atribut[${attr.id}]" class="form-control">
+                        ${optionsHtml}
+                    </select>
+                `;
                         }
 
                         // TEXT
@@ -382,20 +381,36 @@
                                 `<input type="text" name="atribut[${attr.id}]" class="form-control">`;
                         }
 
+                        // JIKA ADA SATUAN → INPUT GROUP
+                        if (attr.satuan) {
+                            field = `
+                    <div class="input-group">
+                        ${input}
+                        <div class="input-group-append">
+                            <span class="input-group-text">${attr.satuan}</span>
+                        </div>
+                    </div>
+                `;
+                        } else {
+                            field = input;
+                        }
+
+                        // APPEND KE FORM
                         $('#atribut-area').append(`
-                           <div class="form-group row">
-                                <p class="col-md-2">
-                                    ${attr.nama_atribut}
-                                </p>
-                                <div class="col-md-10">
-                                    ${input}
-                                </div>
-                            </div>
-                        `);
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label">
+                        ${attr.nama_atribut}
+                    </label>
+                    <div class="col-md-8">
+                        ${field}
+                    </div>
+                </div>
+            `);
                     });
 
                 });
             });
+
 
             function previewFoto() {
                 const input = document.getElementById('foto');
@@ -532,5 +547,14 @@
 
                 return parts.join(',');
             }
+        </script>
+        <script>
+            $(document).ready(function() {
+                $('.select2').select2({
+                    dropdownParent: $('#modal-form'),
+                    theme: 'bootstrap4'
+                });
+
+            });
         </script>
     @endpush

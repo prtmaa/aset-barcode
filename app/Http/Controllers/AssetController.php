@@ -125,7 +125,8 @@ class AssetController extends Controller
                 if ($asset->atributValues && $asset->atributValues->count()) {
                     foreach ($asset->atributValues as $val) {
                         $nama = optional($val->atribut)->nama_atribut ?? '-';
-                        $spesifikasi .= $nama . ': ' . $val->nilai . "\n";
+                        $satuan = optional($val->atribut)->satuan ?? '';
+                        $spesifikasi .= $nama . ': ' . $val->nilai . " " . $satuan . "\n";
                     }
                 }
 

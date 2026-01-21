@@ -120,7 +120,7 @@
                             @foreach ($asset->atributValues as $val)
                                 <li>
                                     <b>{{ $val->atribut->nama_atribut ?? '-' }}:</b>
-                                    {{ $val->nilai }}
+                                    {{ $val->nilai }} {{ $val->atribut->satuan ?? '' }}
                                 </li>
                             @endforeach
                         </ul>

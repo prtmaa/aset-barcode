@@ -19,7 +19,7 @@
     <link rel="icon" type="image/png" href="{{ asset('faviconn.png') }}">
 
     <!-- Select2 -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
 
     <!-- Select2 Bootstrap4 Theme -->
     <link rel="stylesheet"
@@ -62,7 +62,7 @@
         .input-group-text,
         .dropdown-item {
             font-family: 'Inter', sans-serif !important;
-            font-size: 13.5px !important;
+            font-size: 13px !important;
             font-weight: 300;
         }
 
@@ -176,15 +176,26 @@
         }
 
         .select2-container .select2-selection--single {
-            height: 38px;
+            height: 36px;
         }
 
         .select2-container--default .select2-selection--single .select2-selection__rendered {
-            line-height: 36px;
+            line-height: 34px;
         }
 
         .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: 36px;
+            height: 34px;
+        }
+
+        /* Font dropdown & selected value */
+        .select2-container--bootstrap4 .select2-selection {
+            font-size: 13px;
+            min-height: 36px;
+        }
+
+        /* Teks item dropdown */
+        .select2-container--bootstrap4 .select2-results__option {
+            font-size: 13px;
         }
     </style>
 
@@ -270,6 +281,7 @@
 
     <!-- Select2 -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 
     @stack('js')
     @yield('scripts')
