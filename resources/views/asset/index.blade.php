@@ -19,6 +19,44 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
+                            <div class="card-body">
+                                <label for="" class="mb-2">Export</label>
+
+                                <form action="{{ route('asset.export') }}" method="POST">
+                                    @csrf
+
+                                    <div class="form-row">
+                                        <div class="col-md-5">
+                                            <small>Kategori</small>
+                                            <select id="kategorifilter" name="kategori_id[]" class="form-control" multiple>
+                                                @foreach ($kategori as $k)
+                                                    <option value="{{ $k->id }}">{{ $k->nama }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <small>Dari Tanggal</small>
+                                            <input type="text" name="tanggal_dari" class="form-control tanggal">
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <small>Sampai Tanggal</small>
+                                            <input type="text" name="tanggal_sampai" class="form-control tanggal">
+                                        </div>
+
+                                        <div class="col-md-1 d-flex align-items-end mt-3 mt-sm-0">
+                                            <button class="btn btn-success btn-sm">
+                                                <i class="fa fa-file-excel"></i> Excel
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="card">
                             <div class="card-header">
                                 <div class="btn-group">
                                     <button onclick="addForm('{{ route('asset.store') }}')" class="btn btn-primary btn-sm">
@@ -445,14 +483,28 @@
 
             flatpickr(".tanggal", {
                 dateFormat: "Y-m-d",
-                defaultDate: "today",
                 locale: "id",
+                allowInput: true,
+                disableMobile: true,
                 onReady: function(selectedDates, dateStr, instance) {
+
+                    const btn = document.createElement("button");
+                    btn.type = "button";
+                    btn.innerHTML = "Reset";
+                    btn.className = "btn btn-sm btn-light w-100 mt-1";
+
+                    btn.addEventListener("click", function() {
+                        instance.clear();
+                        instance.close();
+                    });
+
+                    instance.calendarContainer.appendChild(btn);
                     instance.input.style.backgroundColor = "#fff";
                     instance.input.style.color = "#000";
                     instance.input.style.border = "1px solid #ced4da";
                 }
             });
+
 
             $('#is_assign').on('change', function() {
                 if ($(this).is(':checked')) {
@@ -550,11 +602,20 @@
         </script>
         <script>
             $(document).ready(function() {
-                $('.select2').select2({
-                    dropdownParent: $('#modal-form'),
-                    theme: 'bootstrap4'
+                $('#modal-form').on('shown.bs.modal', function() {
+                    $(this).find('.select2').select2({
+                        dropdownParent: $('#modal-form .modal-body'),
+                        theme: 'bootstrap4',
+                        width: '100%'
+                    });
                 });
+            });
 
+
+            $(document).ready(function() {
+                $('#kategorifilter').select2({
+                    width: '100%'
+                });
             });
         </script>
     @endpush

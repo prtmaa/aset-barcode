@@ -197,6 +197,25 @@
         .select2-container--bootstrap4 .select2-results__option {
             font-size: 13px;
         }
+
+        .select2-container--default .select2-selection--single,
+        .select2-container--default .select2-selection--multiple {
+            border: 1px solid #ced4da;
+            border-radius: .25rem;
+            padding: 4px 8px;
+            font-size: 14px;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #e9ecef;
+            color: #343a40;
+            font-size: 13px;
+            padding-left: 25px
+        }
+
+        .modal-body {
+            position: relative;
+        }
     </style>
 
 

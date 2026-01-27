@@ -11,11 +11,10 @@
 @section('content')
     <div class="container-fluid">
         <div class="card">
-            <div class="card-header text-right">
-                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
-
-                    <div class="d-flex flex-column flex-md-row align-items-md-center gap-2 mb-2 mb-md-0">
-                        <select name="kategori_id" id="filter-kategori" class="form-control form-control-sm"
+            <div class="card-header">
+                <div class="d-flex flex-wrap justify-content-between align-items-center">
+                    <div class="col-md-3">
+                        <select name="kategori_id" id="filter-kategori" class="form-control form-control-sm select2"
                             style="min-width: 220px;">
                             <option value="">-- Semua Kategori --</option>
                             @foreach ($kategoris as $kat)
@@ -25,7 +24,7 @@
                     </div>
 
                     <button onclick="addForm('{{ route('assetattribute.store') }}')"
-                        class="btn btn-primary btn-sm align-self-md-center align-self-start">
+                        class="btn btn-primary btn-sm ml-2 mt-3 mt-sm-0">
                         <i class="fa fa-plus-circle"></i> Tambah Data
                     </button>
 
@@ -251,5 +250,12 @@
                 }
             })
         }
+
+        $(document).ready(function() {
+            $('.select2').select2({
+                theme: 'bootstrap4',
+                width: '100%'
+            });
+        });
     </script>
 @endpush

@@ -22,7 +22,7 @@
         <li class="nav-item dropdown user-menu">
             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
                 <img src="{{ asset('images/user.jpg') }}" class="user-image img-circle elevation-2">
-                <span class="d-none d-md-inline">Master</span>
+                <span class="d-none d-md-inline">{{ Auth::user()->name }}</span>
             </a>
             <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
 
@@ -30,8 +30,8 @@
                 <li class="user-header bg-primary">
                     <img src="{{ asset('images/user.jpg') }}" class="user-image img-circle elevation-2">
                     <p>
-                        Master
-                        <small>email</small>
+                        {{ Auth::user()->name }}
+                        <small>{{ Auth::user()->email }}</small>
                     </p>
                 </li>
 
@@ -39,11 +39,11 @@
                 <li class="user-footer">
                     <a href="{{ url('user') }}" class="btn btn-default">Profil</a>
 
-                    <a href="" class="btn btn-default float-right"
+                    <a href="{{ route('logout') }}" class="btn btn-default float-right"
                         onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         Logout
                     </a>
-                    <form id="logout-form" action="" method="POST" class="d-none">
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                         @csrf
                     </form>
                 </li>

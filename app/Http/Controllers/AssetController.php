@@ -15,6 +15,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Exports\AssetExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\Image;
 use Intervention\Image\ImageManager;
@@ -390,6 +392,19 @@ class AssetController extends Controller
 
         return view('asset.view', compact('asset'));
     }
+
+    public function export(Request $request)
+    {
+        $kategoriIds = $request->kategori_id ?? [];
+        $tglDari = $request->tanggal_dari;
+        $tglSampai = $request->tanggal_sampai;
+
+        return Excel::download(
+            new AssetExport($kategoriIds, $tglDari, $tglSampai),
+            'asset_' . now()->format('Ymd_His') . '.xlsx'
+        );
+    }
+
 
     // public function scan($kode)
     // {

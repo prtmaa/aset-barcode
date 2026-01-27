@@ -10,7 +10,7 @@
                     style="width:30px; height:30px; object-fit:cover;" alt="Logo"> --}}
             </div>
             <div class="info ml-2">
-                <a href="#" class="d-block font-weight-bold">Stok MTC</a>
+                <a href="#" class="d-block font-weight-bold">Aset RPA</a>
             </div>
         </div>
 
@@ -113,6 +113,13 @@
                     </ul>
                 </li>
 
+                <li class="nav-item">
+                    <a href="{{ url('user') }}"
+                        class="nav-link {{ (request()->is('user*') ? 'active' : '' || request()->is('user*')) ? 'active' : '' }}">
+                        <i class="nav-icon fas  fa-user"></i>
+                        <p>User</p>
+                    </a>
+                </li>
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

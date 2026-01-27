@@ -178,7 +178,7 @@
                        <div class="form-group row">
                            <label class="col-md-4 col-md-offset-1 control-label">Kondisi</label>
                            <div class="col-md-8">
-                               <select name="kondisi" class="form-control select2">
+                               <select name="kondisi" id="kondisi" class="form-control select2">
                                    <option value="Baik">Baik</option>
                                    <option value="Cukup">Cukup</option>
                                    <option value="Rusak Ringan">Rusak Ringan</option>
@@ -191,7 +191,7 @@
                        <div class="form-group row">
                            <label class="col-md-4 col-md-offset-1 control-label">Status</label>
                            <div class="col-md-8">
-                               <select name="status" class="form-control select2">
+                               <select name="status" id="status" class="form-control select2">
                                    <option value="Aktif Digunakan">Aktif Digunakan</option>
                                    <option value="Dalam Perbaikan">Dalam Perbaikan</option>
                                    <option value="Disimpan">Disimpan</option>
