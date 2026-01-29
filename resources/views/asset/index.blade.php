@@ -104,6 +104,7 @@
         @include('asset.foto')
         @include('asset.qrcode')
         @include('asset.detail')
+        @include('asset.depresiasi')
     @endsection
 
     @push('js')
@@ -616,6 +617,25 @@
                 $('#kategorifilter').select2({
                     width: '100%'
                 });
+            });
+        </script>
+        <script>
+            $(document).on('click', '.show-depresiasi', function() {
+                $('#depHarga').text($(this).data('harga'));
+                $('#depUmur').text($(this).data('umur') + ' Bulan');
+                $('#depBulan').text($(this).data('bulan') + '/' + $(this).data('umur'));
+                $('#depPerBulan').text($(this).data('dep-bulan'));
+                $('#depTotal').text($(this).data('total-dep'));
+                $('#depNilaiBuku').text($(this).data('nilai-buku'));
+
+                if ($(this).data('disposal') == 1) {
+                    $('#depDisposal').removeClass('d-none');
+                    $('#depTglDisposal').text($(this).data('tgl-disposal'));
+                } else {
+                    $('#depDisposal').addClass('d-none');
+                }
+
+                $('#modalDepresiasi').modal('show');
             });
         </script>
     @endpush

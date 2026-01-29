@@ -59,27 +59,18 @@
                             <th>Lokasi</th>
                             <td>{{ $asset->lokasi->nama ?? '-' }}</td>
                         </tr>
-                        <tr>
-                            <th>Vendor</th>
-                            <td>{{ $asset->vendor->nama }}</td>
-                        </tr>
                     </table>
                 </div>
 
                 <div class="col-md-4">
                     <table class="table table-bordered">
                         <tr>
-                            <th width="130">Kategori</th>
-                            <td>{{ $asset->kategori->nama ?? '-' }}</td>
+                            <th width="130">Vendor</th>
+                            <td>{{ $asset->vendor->nama }}</td>
                         </tr>
-
                         <tr>
                             <th>Jumlah</th>
                             <td>{{ $asset->jumlah ?? '-' }}</td>
-                        </tr>
-                        <tr>
-                            <th>Nilai Perolehan</th>
-                            <td>{{ formatRupiah($asset->harga) ?? '-' }}</td>
                         </tr>
                         <tr>
                             <th>Tgl Perolehan</th>
@@ -110,7 +101,69 @@
             {{-- ATRIBUT --}}
             <hr>
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <h6>Depresiasi Aset</h6>
+
+                    <div class="row mb-1">
+                        <div class="col-6 text-muted">Nilai Perolehan</div>
+                        <div class="col-6 fw-bold text-end">
+                            {{ formatRupiah($asset->harga) }}
+                        </div>
+                    </div>
+
+                    <div class="row mb-1">
+                        <div class="col-6 text-muted">Umur Manfaat</div>
+                        <div class="col-6 fw-bold text-end">36 Bulan</div>
+                    </div>
+
+                    <div class="row mb-1">
+                        <div class="col-6 text-muted">Bulan Terpakai</div>
+                        <div class="col-6 fw-bold text-end">
+                            {{ $asset->bulan_terpakai }} Bulan
+                        </div>
+                    </div>
+
+                    <div class="row mb-1">
+                        <div class="col-6 text-muted">Depresiasi / Bulan</div>
+                        <div class="col-6 fw-bold text-end">
+                            {{ formatRupiah($asset->depresiasi_bulanan) }}
+                        </div>
+                    </div>
+
+                    <div class="row mb-1">
+                        <div class="col-6 text-muted">Total Depresiasi</div>
+                        <div class="col-6 fw-bold text-end">
+                            {{ formatRupiah($asset->total_depresiasi) }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-10">
+                            <hr class="my-2">
+                        </div>
+                        <div class="col-2 text-end">
+                        </div>
+                    </div>
+
+
+                    <div class="row align-items-center">
+                        <div class="col-6 text-muted">Nilai Buku</div>
+                        <div class="col-6 text-end">
+                            @if ($asset->is_disposal)
+                                <span class="fw-bold text-dark">Rp. 0</span><br>
+                                <small class="fw-bold text-danger">
+                                    (Disposal {{ formatTanggalIndo($asset->tanggal_disposal) }})
+                                </small>
+                            @else
+                                <span class="fw-bold">
+                                    {{ formatRupiah($asset->nilai_buku) }}
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
                     <h6>Spesifikasi Aset</h6>
 
                     @if ($asset->atributValues->isEmpty())
@@ -126,7 +179,8 @@
                         </ul>
                     @endif
                 </div>
-                <div class="col-md-6">
+
+                <div class="col-md-3">
                     <h6>Kelengkapan</h6>
 
                     @if (empty($asset->kelengkapan))

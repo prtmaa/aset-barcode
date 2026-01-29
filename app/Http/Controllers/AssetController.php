@@ -56,7 +56,24 @@ class AssetController extends Controller
             ->addColumn('lokasi', fn($asset) => $asset->lokasi->nama ?? '-')
             ->addColumn('tipe', fn($asset) => $asset->tipe->nama ?? '-')
             ->addColumn('vendor', fn($asset) => $asset->vendor->nama ?? '-')
-            ->addColumn('harga', fn($asset) => formatRupiah($asset->harga) ?? '-')
+            ->addColumn('harga', function ($asset) {
+                return '
+                    <a href="javascript:void(0)"
+                    class="text-decoration-none text-primary show-depresiasi"
+                    data-harga="' . formatRupiah($asset->harga) . '"
+                    data-bulan="' . $asset->bulan_terpakai . '"
+                    data-umur="' . $asset->umur_manfaat . '"
+                    data-dep-bulan="' . formatRupiah($asset->depresiasi_bulanan) . '"
+                    data-total-dep="' . formatRupiah($asset->total_depresiasi) . '"
+                    data-nilai-buku="' . formatRupiah($asset->nilai_buku) . '"
+                    data-disposal="' . ($asset->is_disposal ? '1' : '0') . '"
+                    data-tgl-disposal="' . ($asset->tanggal_disposal ? formatTanggalIndo($asset->tanggal_disposal) : '-') . '"
+                    >
+                        ' . formatRupiah($asset->harga) . '
+                    </a>
+                ';
+            })
+
             // ->addColumn('atribut', function ($asset) {
 
             //     if (!$asset->atributValues || $asset->atributValues->isEmpty()) {
@@ -159,7 +176,7 @@ class AssetController extends Controller
                     </div>
                 ';
             })
-            ->rawColumns(['atribut', 'aksi', 'pengguna', 'tanggal_pembelian'])
+            ->rawColumns(['atribut', 'aksi', 'pengguna', 'tanggal_pembelian', 'harga'])
             ->make(true);
     }
 
