@@ -13,9 +13,14 @@
                     <div class="col-6 text-end fw-bold" id="depHarga"></div>
                 </div>
 
-                <div class="row mb-2">
+                <div class="row mb-2 align-items-center">
                     <div class="col-6 text-muted">Umur Manfaat</div>
-                    <div class="col-6 text-end fw-bold" id="depUmur"></div>
+                    <div class="col-6 text-end fw-bold">
+                        <span id="depUmur"></span>
+                        <button type="button" class="btn btn-xs text-primary ms-1" id="btnEditUmur">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="row mb-2">

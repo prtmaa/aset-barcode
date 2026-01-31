@@ -66,7 +66,7 @@
                     <table class="table table-bordered">
                         <tr>
                             <th width="130">Vendor</th>
-                            <td>{{ $asset->vendor->nama }}</td>
+                            <td>{{ $asset->vendor->nama ?? '-' }}</td>
                         </tr>
                         <tr>
                             <th>Jumlah</th>
@@ -113,7 +113,7 @@
 
                     <div class="row mb-1">
                         <div class="col-6 text-muted">Umur Manfaat</div>
-                        <div class="col-6 fw-bold text-end">36 Bulan</div>
+                        <div class="col-6 fw-bold text-end">{{ $asset->umur_manfaat }} Bulan</div>
                     </div>
 
                     <div class="row mb-1">

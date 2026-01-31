@@ -620,10 +620,20 @@
             });
         </script>
         <script>
+            let currentAssetId = null;
+            let currentUmur = null;
+
             $(document).on('click', '.show-depresiasi', function() {
+                currentAssetId = $(this).data('id');
+                currentUmur = $(this).data('umur');
+                currentBulanTerpakai = $(this).data('bulan');
+                currentPerBulan = $(this).data('dep-bulan');
+                currentTotalDep = $(this).data('total-dep');
+                currentNilaiBuku = $(this).data('nilai-buku');
+
                 $('#depHarga').text($(this).data('harga'));
                 $('#depUmur').text($(this).data('umur') + ' Bulan');
-                $('#depBulan').text($(this).data('bulan') + '/' + $(this).data('umur'));
+                $('#depBulan').text($(this).data('bulan') + '/' + $(this).data('umur') + ' Bulan');
                 $('#depPerBulan').text($(this).data('dep-bulan'));
                 $('#depTotal').text($(this).data('total-dep'));
                 $('#depNilaiBuku').text($(this).data('nilai-buku'));
@@ -637,5 +647,76 @@
 
                 $('#modalDepresiasi').modal('show');
             });
+
+            $(document).on('click', '#btnEditUmur', function() {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Edit',
+                    input: 'number',
+                    inputLabel: 'Umur Manfaat (bulan)',
+                    inputValue: currentUmur,
+                    inputAttributes: {
+                        min: 1
+                    },
+                    showCancelButton: true,
+                    confirmButtonText: 'Simpan',
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonText: 'Batal',
+                    cancelButtonColor: '#dc3545',
+                    inputValidator: (value) => {
+                        if (!value || value < 1) {
+                            return 'Umur manfaat tidak valid';
+                        }
+                    }
+                }).then((result) => {
+                    if (!result.isConfirmed) return;
+                    updateUmurManfaat(result.value);
+                });
+            });
+
+
+            function updateUmurManfaat(umur) {
+
+                $.ajax({
+                    url: `/asset/${currentAssetId}/update-umur`,
+                    method: 'POST',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        umur_manfaat: umur
+                    },
+                    success: function(res) {
+
+                        currentUmur = res.umur;
+                        currentBulanTerpakai = res.bulan;
+                        currentPerBulan = res.per_bulan;
+                        currentTotalDep = res.total_dep;
+                        currentNilaiBuku = res.nilai_buku;
+
+                        $('#depUmur').text(res.umur + ' Bulan');
+                        $('#depBulan').text(res.bulan + '/' + res.umur + ' Bulan');
+                        $('#depPerBulan').text(res.per_bulan);
+                        $('#depTotal').text(res.total_dep);
+                        $('#depNilaiBuku').text(res.nilai_buku);
+
+                        if (res.is_disposal) {
+                            $('#depDisposal').removeClass('d-none');
+                            $('#depTglDisposal').text(res.tgl_disposal);
+                        } else {
+                            $('#depDisposal').addClass('d-none');
+                        }
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil',
+                            text: 'Umur manfaat diperbarui',
+                            timer: 1300,
+                            showConfirmButton: false
+                        });
+
+                        $('#tableAsset').DataTable().ajax.reload(null, false);
+                    }
+
+                });
+            }
         </script>
     @endpush

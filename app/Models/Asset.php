@@ -73,12 +73,12 @@ class Asset extends Model
     protected $casts = [
         'tanggal_pembelian' => 'date',
         'harga' => 'float',
-        'umur_manfaat' => 'float',
+        'umur_manfaat' => 'integer',
     ];
 
 
 
-    // Bulan terpakai (maks 36)
+    // Bulan terpakai
     public function getBulanTerpakaiAttribute()
     {
         if (!$this->tanggal_pembelian) {
@@ -111,12 +111,15 @@ class Asset extends Model
 
     public function getTanggalDisposalAttribute()
     {
-        if (!$this->tanggal_pembelian) {
+        if (!$this->tanggal_pembelian || !$this->umur_manfaat) {
             return null;
         }
 
-        return $this->tanggal_pembelian->copy()->addMonths(36);
+        return $this->tanggal_pembelian
+            ->copy()
+            ->addMonths($this->umur_manfaat);
     }
+
 
     public function getIsDisposalAttribute()
     {

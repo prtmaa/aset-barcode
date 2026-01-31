@@ -60,6 +60,7 @@ class AssetController extends Controller
                 return '
                     <a href="javascript:void(0)"
                     class="text-decoration-none text-primary show-depresiasi"
+                    data-id="' . $asset->id . '"
                     data-harga="' . formatRupiah($asset->harga) . '"
                     data-bulan="' . $asset->bulan_terpakai . '"
                     data-umur="' . $asset->umur_manfaat . '"
@@ -422,6 +423,38 @@ class AssetController extends Controller
         );
     }
 
+    public function updateUmur(Request $request, $id)
+    {
+        $request->validate([
+            'umur_manfaat' => 'required|integer|min:1'
+        ]);
+
+        $asset = Asset::findOrFail($id);
+
+        if ($asset->is_disposal) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Aset sudah disposal'
+            ], 422);
+        }
+
+        $asset->umur_manfaat = $request->umur_manfaat;
+        $asset->save();
+
+        // refresh supaya accessor ikut update
+        $asset->refresh();
+
+        return response()->json([
+            'success' => true,
+            'umur' => $asset->umur_manfaat,
+            'bulan' => $asset->bulan_terpakai,
+            'per_bulan' => number_format($asset->depresiasi_bulanan, 0, ',', '.'),
+            'total_dep' => number_format($asset->total_depresiasi, 0, ',', '.'),
+            'nilai_buku' => number_format($asset->nilai_buku, 0, ',', '.'),
+            'is_disposal' => $asset->is_disposal,
+            'tgl_disposal' => optional($asset->tanggal_disposal)->format('d-m-Y'),
+        ]);
+    }
 
     // public function scan($kode)
     // {

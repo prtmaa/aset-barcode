@@ -56,6 +56,7 @@ Route::middleware('auth')->group(function () {
         ->name('asset.view');
 
     Route::post('/asset/export', [AssetController::class, 'export'])->name('asset.export');
+    Route::post('/asset/{id}/update-umur', [AssetController::class, 'updateUmur']);
 
     Route::get('/user/data', [UserController::class, 'data'])->name('user.data');
     Route::resource('/user', UserController::class);
