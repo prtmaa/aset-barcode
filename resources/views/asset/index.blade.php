@@ -547,18 +547,45 @@
                 $('#fotoModal').modal('show');
             }
 
+            let currentKodeAset = null;
+
             function showQrModal(kode) {
+                currentKodeAset = kode;
                 $('#qrContainer').html('');
                 $('#kodeAset').text(kode);
 
-                new QRCode(document.getElementById("qrContainer"), {
+                let qr = new QRCode(document.getElementById("qrContainer"), {
                     text: kode,
                     width: 200,
                     height: 200
                 });
 
+                setTimeout(() => {
+                    let canvas = $('#qrContainer canvas')[0];
+                    let base64 = canvas.toDataURL("image/png");
+                    $('#qrBase64').val(base64);
+                }, 300);
+
                 $('#qrModal').modal('show');
             }
+
+            function downloadQrPdf() {
+                let base64 = $('#qrBase64').val();
+
+                let form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/asset/qr-pdf';
+
+                form.innerHTML = `
+                    <input type="hidden" name="_token" value="${$('meta[name="csrf-token"]').attr('content')}">
+                    <input type="hidden" name="kode" value="${currentKodeAset}">
+                    <input type="hidden" name="qr" value="${base64}">
+                `;
+
+                document.body.appendChild(form);
+                form.submit();
+            }
+
 
             // input harga
             function formatRibuanKoma(el) {

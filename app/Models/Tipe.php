@@ -9,7 +9,7 @@ class Tipe extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nama'];
+    protected $fillable = ['nama', 'kode'];
 
     public function assets()
     {

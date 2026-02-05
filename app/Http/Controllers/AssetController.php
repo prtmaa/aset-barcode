@@ -17,10 +17,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Exports\AssetExport;
 use Maatwebsite\Excel\Facades\Excel;
-use Intervention\Image\Drivers\Gd\Driver;
-use Intervention\Image\Image;
-use Intervention\Image\ImageManager;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class AssetController extends Controller
@@ -52,7 +49,28 @@ class AssetController extends Controller
         return datatables()
             ->of($asset)
             ->addIndexColumn()
+            ->addColumn('nama_aset', function ($asset) {
+                $spesifikasi = '';
 
+                if ($asset->atributValues && $asset->atributValues->count()) {
+                    foreach ($asset->atributValues as $val) {
+                        $nama = optional($val->atribut)->nama_atribut ?? '-';
+                        $satuan = optional($val->atribut)->satuan ?? '';
+                        $spesifikasi .= $nama . ': ' . $val->nilai . " " . $satuan . "\n";
+                    }
+                }
+
+                return '
+                    <a href="javascript:void(0)"
+                    class="text-decoration-none text-primary btn-detail"
+                      data-spesifikasi="' . e(trim($spesifikasi)) . '"
+                            data-kelengkapan="' . e($asset->kelengkapan) . '"
+                            data-kategori="' . e($asset->kategori->nama) . '"
+                            data-catatan="' . e($asset->catatan) . '">
+                        ' . $asset->nama_aset . '
+                    </a>
+                ';
+            })
             ->addColumn('lokasi', fn($asset) => $asset->lokasi->nama ?? '-')
             ->addColumn('tipe', fn($asset) => $asset->tipe->nama ?? '-')
             ->addColumn('vendor', fn($asset) => $asset->vendor->nama ?? '-')
@@ -118,7 +136,7 @@ class AssetController extends Controller
                 $emp = $asset->activeAssignment->employee;
 
                 return '<b>' . e($emp->nama) . '</b><br>
-                        <small class="text-muted">' . e($emp->jabatan ?? '') . '</br>' . e($emp->departemen ?? '') . '</small>';
+                         <small class="text-muted">' . e($emp->departemen ?? '') . '</br>' . e($emp->jabatan ?? '') . '</small>';
             })
             ->addColumn('aksi', function ($asset) {
 
@@ -167,25 +185,12 @@ class AssetController extends Controller
                             onclick="showQrModal(`' . e($asset->kode_aset) . '`)">
                             <i class="fas fa-qrcode"></i>
                         </button>
-                        <button type="button" class="btn btn-sm btn-primary btn-detail btn-flat"
-                            data-spesifikasi="' . e(trim($spesifikasi)) . '"
-                            data-kelengkapan="' . e($asset->kelengkapan) . '"
-                            data-kategori="' . e($asset->kategori->nama) . '"
-                            data-catatan="' . e($asset->catatan) . '">
-                            <i class="fas fa-list"></i>
-                        </button>
                     </div>
                 ';
             })
-            ->rawColumns(['atribut', 'aksi', 'pengguna', 'tanggal_pembelian', 'harga'])
+            ->rawColumns(['nama_aset', 'atribut', 'aksi', 'pengguna', 'tanggal_pembelian', 'harga'])
             ->make(true);
     }
-
-    //     $url = url('/scan/' . $asset->kode_aset);
-
-    //     $qr = QrCode::size(80)
-    //         ->margin(1)
-    //         ->generate($url);
 
 
     public function store(Request $request)
@@ -201,6 +206,8 @@ class AssetController extends Controller
                 'keterangan',
                 'foto'
             ]);
+
+            $data['kode_aset'] = Asset::generateKodeByKategori($request->tipe_id);
 
             // NORMALISASI HARGA
             if ($request->filled('harga')) {
@@ -271,7 +278,8 @@ class AssetController extends Controller
     {
         DB::transaction(function () use ($request, $id) {
 
-            $asset = Asset::findOrFail($id);
+            // LOCK biar aman
+            $asset = Asset::lockForUpdate()->findOrFail($id);
 
             // DATA UTAMA
             $data = $request->except([
@@ -280,7 +288,8 @@ class AssetController extends Controller
                 'employee_id',
                 'tanggal_mulai',
                 'keterangan',
-                'foto'
+                'foto',
+                'kode_aset'
             ]);
 
             // NORMALISASI HARGA
@@ -302,10 +311,22 @@ class AssetController extends Controller
                 $data['foto'] = 'assets/foto/' . $nama;
             }
 
+            // CEK PERUBAHAN KATEGORI
+            if (
+                $request->filled('tipe_id') &&
+                $request->tipe_id != $asset->tipe_id
+            ) {
+                $data['kode_aset'] = Asset::generateKodeByKategori(
+                    $request->tipe_id,
+                    $asset->id
+                );
+            }
+
+
             // UPDATE ASSET
             $asset->update($data);
 
-            // ATRIBUT DINAMIS (REPLACE)
+            // ATRIBUT DINAMIS
             AssetAttributeValue::where('asset_id', $asset->id)->delete();
 
             if ($request->filled('atribut')) {
@@ -336,14 +357,12 @@ class AssetController extends Controller
             if ($request->boolean('is_assign') && $request->filled('employee_id')) {
 
                 if ($assignment) {
-                    // update assignment aktif
                     $assignment->update([
                         'employee_id' => $request->employee_id,
                         'tanggal_mulai' => $request->tanggal_mulai ?? $assignment->tanggal_mulai,
                         'keterangan' => $request->keterangan,
                     ]);
                 } else {
-                    // buat assignment baru
                     AssetAssignment::create([
                         'asset_id' => $asset->id,
                         'employee_id' => $request->employee_id,
@@ -353,7 +372,6 @@ class AssetController extends Controller
                     ]);
                 }
             } else {
-                // checkbox dilepas → tutup assignment lama
                 if ($assignment) {
                     $assignment->update([
                         'status' => 'selesai',
@@ -365,6 +383,7 @@ class AssetController extends Controller
 
         return response()->json(['message' => 'Data berhasil diubah'], 200);
     }
+
 
 
 
@@ -454,6 +473,20 @@ class AssetController extends Controller
             'is_disposal' => $asset->is_disposal,
             'tgl_disposal' => optional($asset->tanggal_disposal)->format('d-m-Y'),
         ]);
+    }
+
+    public function downloadQrPdf(Request $request)
+    {
+        $asset = Asset::where('kode_aset', $request->kode)->firstOrFail();
+
+        $qrBase64 = $request->qr;
+
+        $pdf = Pdf::loadView('asset.qr-pdf', [
+            'asset' => $asset,
+            'qr' => $qrBase64
+        ])->setPaper('a6', 'landscape');
+
+        return $pdf->download('QR-' . $asset->kode_aset . '.pdf');
     }
 
     // public function scan($kode)

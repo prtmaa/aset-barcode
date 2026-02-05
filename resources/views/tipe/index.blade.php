@@ -35,6 +35,7 @@
                                         <thead>
                                             <th style="width: 20px;">No</th>
                                             <th>Tipe</th>
+                                            <th>Kode</th>
                                             <th style="width: 220px;">Aksi</th>
                                         </thead>
                                         <tbody>
@@ -92,6 +93,9 @@
                         },
                         {
                             data: 'nama'
+                        },
+                        {
+                            data: 'kode'
                         },
 
                         {
@@ -167,6 +171,7 @@
                 $.get(url)
                     .done((response) => {
                         $('#modal-form [name=nama]').val(response.nama);
+                        $('#modal-form [name=kode]').val(response.kode);
                     })
                     .fail((errors) => {
                         Swal.fire({

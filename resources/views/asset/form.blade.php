@@ -12,7 +12,7 @@
 
                    <div class="modal-body">
 
-                       <div class="form-group row">
+                       {{-- <div class="form-group row">
                            <label for="kode_aset" class="col-md-4 col-md-offset-1 control-label">Kode Aset</label>
                            <div class="col-md-8">
                                <input type="text" name="kode_aset" id="kode_aset" class="form-control" required
@@ -20,7 +20,7 @@
                                    oninput="this.setCustomValidity('')" placeholder="GRO22110100XXXX">
                                <span class="help-block with-errors"></span>
                            </div>
-                       </div>
+                       </div> --}}
 
                        <div class="form-group row">
                            <label for="nama_aset" class="col-md-4 col-md-offset-1 control-label">Nama Aset</label>

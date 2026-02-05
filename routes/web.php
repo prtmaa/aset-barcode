@@ -57,6 +57,8 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/asset/export', [AssetController::class, 'export'])->name('asset.export');
     Route::post('/asset/{id}/update-umur', [AssetController::class, 'updateUmur']);
+    Route::post('/asset/qr-pdf', [AssetController::class, 'downloadQrPdf']);
+
 
     Route::get('/user/data', [UserController::class, 'data'])->name('user.data');
     Route::resource('/user', UserController::class);

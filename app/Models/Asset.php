@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Asset extends Model
 {
@@ -124,5 +125,42 @@ class Asset extends Model
     public function getIsDisposalAttribute()
     {
         return $this->nilai_buku <= 0;
+    }
+
+    public static function generateKodeByKategori($tipeId, $ignoreAssetId = null)
+    {
+        $tahun = date('Y');
+
+        $tipe = DB::table('tipes')->where('id', $tipeId)->first();
+        if (!$tipe) {
+            throw new \Exception('Tipe tidak ditemukan');
+        }
+
+        // Ambil kode tipe
+        $kodeTipe = property_exists($tipe, 'kode')
+            ? $tipe->kode
+            : strtoupper(substr(preg_replace('/\s+/', '', $tipe->nama), 0, 3));
+
+        $prefix = $kodeTipe . '-' . $tahun;
+
+        do {
+            $last = DB::table('assets')
+                ->where('tipe_id', $tipeId)
+                ->when($ignoreAssetId, fn($q) => $q->where('id', '!=', $ignoreAssetId))
+                ->where('kode_aset', 'like', $prefix . '%')
+                ->lockForUpdate()
+                ->orderBy('kode_aset', 'desc')
+                ->value('kode_aset');
+
+            $number = $last
+                ? (int) substr($last, -4) + 1
+                : 1;
+
+            $newKode = $prefix . '-' . str_pad($number, 4, '0', STR_PAD_LEFT);
+
+            $exists = DB::table('assets')->where('kode_aset', $newKode)->exists();
+        } while ($exists);
+
+        return $newKode;
     }
 }

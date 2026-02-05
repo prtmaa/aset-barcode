@@ -35,6 +35,7 @@ class TipeController extends Controller
     {
         $tipe = new Tipe();
         $tipe->nama = $request->nama;
+        $tipe->kode = $request->kode;
         $tipe->save();
 
         return response()->json('Data berhasil disimpan', 200);
@@ -51,6 +52,7 @@ class TipeController extends Controller
     {
         $tipe = Tipe::find($id);
         $tipe->nama = $request->nama;
+        $tipe->kode = $request->kode;
         $tipe->update();
 
         return response()->json('Data berhasil diubah', 200);

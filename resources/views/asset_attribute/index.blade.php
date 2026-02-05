@@ -16,7 +16,7 @@
                     <div class="col-md-3">
                         <select name="kategori_id" id="filter-kategori" class="form-control form-control-sm select2"
                             style="min-width: 220px;">
-                            <option value="">-- Semua Kategori --</option>
+                            <option value="">Semua Kategori</option>
                             @foreach ($kategoris as $kat)
                                 <option value="{{ $kat->id }}">{{ $kat->nama }}</option>
                             @endforeach

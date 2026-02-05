@@ -27,6 +27,16 @@
                             </div>
                         </div>
 
+                        <div class="form-group row">
+                            <label for="kode" class="col-md-2 col-md-offset-1 control-label">Kode</label>
+                            <div class="col-md 6">
+                                <input type="text" name="kode" id="kode" class="form-control" required
+                                    oninvalid="this.setCustomValidity('Kode tipe harus diisi')"
+                                    oninput="this.setCustomValidity('')" autofocus>
+                                <span class="help-block with-errors"></span>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal"><i

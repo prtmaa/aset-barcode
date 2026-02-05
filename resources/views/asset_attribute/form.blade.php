@@ -13,8 +13,8 @@
 
                     <div class="form-group">
                         <label>Kategori</label>
-                        <select name="kategori_id" class="form-control" required>
-                            <option value="">-- Pilih Kategori --</option>
+                        <select name="kategori_id" class="form-control select2" required>
+                            <option value="">Pilih Kategori</option>
                             @foreach ($kategoris as $kat)
                                 <option value="{{ $kat->id }}">{{ $kat->nama }}</option>
                             @endforeach
